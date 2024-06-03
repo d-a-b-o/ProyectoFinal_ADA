@@ -31,9 +31,9 @@ Este proyecto está licenciado bajo el MIT License - más detalles en el archivo
 
 ## Institución :mortar_board:
 
-- University: Universidad San Ignacio de Loyola (USIL) Lima, Perú
-- Course: Análisis y Diseño de Algoritmos
-- Semester: 2024-01
+- Universiidad: Universidad San Ignacio de Loyola (USIL) Lima, Perú
+- Curso: Análisis y Diseño de Algoritmos
+- Semestre: 2024-01
 
 ## Contribuyentes :busts_in_silhouette:
 
