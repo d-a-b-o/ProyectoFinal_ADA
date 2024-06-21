@@ -15,5 +15,9 @@ public:
     static std::string generarDireccion();
     static std::string generarEstadoCivil();
     static Ciudadano generarCiudadanoAleatorio(const std::map<std::string, std::vector<std::string>>& nombres, const std::vector<std::string>& apellidos, const std::vector<std::string>& lugares);
+
+private:
+    static std::string getRandomElement(const std::vector<std::string>& elements);
+
 };
 

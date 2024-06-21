@@ -69,8 +69,133 @@ string GeneradorRegistros::generarCorreo(const string& nombre, const string& ape
     return nombre + "." + apellido + "@gmail.com";
 }
 
+
+
+string GeneradorRegistros::getRandomElement(const vector<string>& elements) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dist(0, elements.size() - 1);
+    return elements[dist(gen)];
+}
 string GeneradorRegistros::generarDireccion() {
-    return "Calle X 111";
+    vector<string> nombreCalle = {"Azángaro ", "La Merced", "Ingenieros", "Javier Prado", "Huérfanos", "Emancipación", "Flora Tristán", "Sauce", "Velasco Astete", "Chacarilla", "Benavides" , "Carabaya"};
+    vector<string> tipoCalle = {"Calle", "Avenida", "Jirón", "Pasaje"};
+    vector<string> provincia = {"Springfield", "Rivertown", "Lakeside", "Hilltop", "Greenfield"};
+    vector<string> departamento = {"Amazonas", "Ancash", "Apurímac", "Arequipa", "Ayacucho", "Cajamarca", "Callao", "Cusco", "Huancavelica", "Huánuco", "Ica", "Junin", "La Libertad", "Lambayeque", "Lima", "Loreto", "Madre de Dios", "Moquegua", "Pasco", "Piura", "Puno", "San Martin", "Tacna", "Tumbes", "Ucayali"};
+
+   
+
+    int numeroCalleAleatorio = rand() % 9999 + 1; // Número de calle aleatorio entre 1 y 9999
+    string nombreCalleAleatorio = getRandomElement(nombreCalle);
+    string tipoCalleAleatorio  = getRandomElement(tipoCalle);
+    string provinciaAleatorio;
+    string departamentoAleatorio  = getRandomElement(departamento);
+     if (departamentoAleatorio =="Amazonas"){
+        vector<string> provinciasEspecificas = {"Chachapoyas", "Bagua", "Bongará", "Condorcanqui", "Luya", "Rodríguez de Mendoza", "Utcubamba"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Ancash")
+    {
+        vector<string> provinciasEspecificas = {"Huaraz", "Ajia", "Antonio Raymondi", "Asuncion", "Bolognesi", "Rodríguez de Mendoza", "Huarmey"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Apurímac")
+    {
+        vector<string> provinciasEspecificas = {"Abancay", "Antabamba", "Aymares", "Cotabambas", "Grau", "Chincheros", "Andahuaylas"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Arequipa")
+    {
+        vector<string> provinciasEspecificas = {"Arequipa", "Camaná", "Caravelí", "Castilla", "Caylloma", "Condesuyos", "Islay", "La Unión"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Ayacucho")
+    {
+        vector<string> provinciasEspecificas = {"Cangallo", "Huanta", "Huamanga ", "Huanca Sancos", "La Mar ", "Lucanas", "Parinacochas", "Páucar del Sara Sara", "Sucre", "Víctor Fajardo", "Vilcashuamán"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Cajamarca")
+    {
+        vector<string> provinciasEspecificas = {"Cajamarca", "Cajabamba", "Celedín ", "Chota", "Contumazá", "Cutervo", "Hualgayoc", "Jaén", "San Ignacio", "San Marcos", "San Miguel", "San Pablo", "Santa Cruz"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Callao")
+    {
+        vector<string> provinciasEspecificas = {"Callao"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Cusco")
+    {
+        vector<string> provinciasEspecificas = {"Cusco", "Acomayo", "Anta ", "Calca", "Canas ", "Canchis", "Chumbivilcas", "Espinar", "La Convención", "Paruro", "Paucartambo", "Quispicanchi", "Urubamba"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Huancavelica")
+    {
+        vector<string> provinciasEspecificas = {"Huancavelica", "Acobamba", "Angaraes ", "Castrovirreyna", "Churcampa ", "Huaytará", "Tayacaja"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Huánuco")
+    {
+        vector<string> provinciasEspecificas = {"Huánuco", "Ambo", "Dos de Mayo ", "Huacaybamba", "Humalies ", "Leoncio Prado", "Marañón", "Pachitea", "Puerto Inca", "Lauricocha", "Yarowilca"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Ica")
+    {
+        vector<string> provinciasEspecificas = {"Ica", "Chincha", "Nazca ", "Palpa", "Pisco "};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Junín")
+    {
+        vector<string> provinciasEspecificas = {"Chanchamayo", "Chupaca", "Concepción ", "Huancayo", "Jauja ", "Junín", "Satipo", "Tarma", "Yauli"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="La Libertad")
+    {
+        vector<string> provinciasEspecificas = {"Trujillo", "Ascope", "Bolívar ", "Chepén", "Julcán ", "Otuzco", "Gran Chimú", "Pacasmayo", "Pataz", "Sánchez Carrión", "Santiago de Chuco", "Virú"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Lambayeque")
+    {
+        vector<string> provinciasEspecificas = {"Chiclayo", "Ferreñafe", "Lambayeque "};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Lima")
+    {
+        vector<string> provinciasEspecificas = {"Barranca", "Cajatambo", "Canta ", "Cañete", "Huaral ", "Huarochirí", "Huaura", "Lima", "Oyón", "Yauyos"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Loreto")
+    {
+        vector<string> provinciasEspecificas = {"Maynas", "Putumayo", "Alto Amazonas ", "Loreto", "Mariscal Ramón Castilla ", "Requena", "Ucayali", "Datem del Marañón"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Madre de Dios")
+    {
+        vector<string> provinciasEspecificas = {"Tambopata", "Manu", "Tahuamanu "};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Moquegua")
+    {
+        vector<string> provinciasEspecificas = {"Mariscal Nieto", "General Sánchez Cerro", "Ilo"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Pasco")
+    {
+        vector<string> provinciasEspecificas = {"Pasco", "Oxapampa", "Daniel A. Carrión"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Piura")
+    {
+        vector<string> provinciasEspecificas = {"Ayabaca", "Huancabamba", "Morropón ", "Piura", "Sechura ", "Paita", "Talara"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Puno")
+    {
+        vector<string> provinciasEspecificas = {"San Román", "Puno", "Azángaro ", "Chucuito", "El Collao ", "Melgar", "Carabaya", "Huancané", "Sandia", "San Antonio de Putina", "Lampa", "Yunguyo", "Moho"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="San Martín")
+    {
+        vector<string> provinciasEspecificas = {"Bellavista", "El Dorado", "Huallaga", "Lamas", "Mariscal Cáceres ", "Moyobamba", "Picota", "Rioja", "San Martín", "Tocache"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Tacna")
+    {
+        vector<string> provinciasEspecificas = {"Tacna", "Candarave", "Jorge Basadre ", "Tarata"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Tumbes")
+    {
+        vector<string> provinciasEspecificas = {"Tumbes", "Zarumilla", "Contralmirante Villar"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }else if (departamentoAleatorio =="Ucayali")
+    {
+        vector<string> provinciasEspecificas = {"Coronel Portillo", "Atalaya", "Padre Abad", "Purús"};
+        provinciaAleatorio = getRandomElement(provinciasEspecificas);
+    }
+    
+    
+    
+    int zipCode = rand() % 90000 + 10000; // Código postal aleatorio entre 10000 y 99999
+
+    return tipoCalleAleatorio + " " + nombreCalleAleatorio + " " +  to_string(numeroCalleAleatorio)+ " " + provinciaAleatorio + ", "   + departamentoAleatorio + " " + to_string(zipCode);
 }
 
 string GeneradorRegistros::generarEstadoCivil() {
