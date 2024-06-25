@@ -38,9 +38,21 @@ streampos BinarySave::getUltimaPosicion()
     return ultimaPosicion;
 }
 
+void BinarySave::addUltimaPosicion(streampos pos)
+{
+    ultimaPosicion += pos;
+}
+
+void BinarySave::setUltimaPosicion(streampos pos)
+{
+    ultimaPosicion = pos;
+}
+
 Ciudadano BinarySave::buscar(string dni)
 {
-    fstream indexFile("../Data/index.bin", ios::in);
+    Ciudadano ciudadano;
+
+    fstream indexFile("../Data/index.csv", ios::in);
     if (!indexFile.is_open())
     {
         cerr << "No se pudo abrir el archivo indices.csv" << endl;
@@ -48,7 +60,7 @@ Ciudadano BinarySave::buscar(string dni)
     }
 
     string linea;
-    streampos posicion = -1;
+    streampos posicion = 0;
 
     while (getline(indexFile, linea))
     {
@@ -86,7 +98,6 @@ Ciudadano BinarySave::buscar(string dni)
     string token;
 
 
-    Ciudadano ciudadano;
     getline(ss, token, ';');
     ciudadano.setDNI(token);
     getline(ss, token, ';');
@@ -109,7 +120,7 @@ Ciudadano BinarySave::buscar(string dni)
     return ciudadano;
 }
 
-void BinarySave::insert(Ciudadano &ciudadano, fstream &fileData, fstream &fileIndex)
+streampos BinarySave::insert(Ciudadano &ciudadano, fstream &fileData, fstream &fileIndex, int opt)
 {
     string linea = ciudadano.getDNI() + ";" +
                    ciudadano.getNombres() + ";" +
@@ -128,19 +139,28 @@ void BinarySave::insert(Ciudadano &ciudadano, fstream &fileData, fstream &fileIn
 
     streampos tamanio = fileData.tellp();
 
-    fileIndex << ciudadano.getDNI() << "," << getUltimaPosicion() << "," << tamanio << "\n";
+    if (opt == 1)
+    {
+        fileIndex << ciudadano.getDNI() << "," << getUltimaPosicion() << "," << tamanio << "\n";
+    }
+    else
+    {
+        fileIndex << ciudadano.getDNI() << "," << getUltimaPosicion() << "," << tamanio - getUltimaPosicion()<< "\n";
+    }
 
-    ultimaPosicion += tamanio;
+    return tamanio;
 }
 
 void BinarySave::save(Ciudadano &ciudadano)
 {
     fstream file("../Data/data.bin", ios::out | ios::app | ios::binary);
-    fstream indexFile("../Data/index.bin", ios::in | ios::out | ios::app);
+    fstream indexFile("../Data/index.csv", ios::in | ios::out | ios::app);
 
     if (file.is_open())
     {
-        insert(ciudadano, file, indexFile);
+        streampos peso;
+        peso = insert(ciudadano, file, indexFile, 1);
+        addUltimaPosicion(peso);
         file.close();
     }
     else

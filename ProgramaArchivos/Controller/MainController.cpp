@@ -4,7 +4,7 @@
 #include "MainController.h"
 #include "../Tools/Tools.cpp"
 
-const int NUM_RANDOM = 3300000;
+const int NUM_RANDOM = 33000000;
 const string RUTA_DATA = "../Data/data.bin";
 const string RUTA_INDEX = "../Data/index.csv";
 
@@ -18,6 +18,7 @@ MainController::MainController() : dniTree(25)
 
 void MainController::run()
 {
+    loadBTree();
     int opt;
     do
     {
@@ -93,18 +94,24 @@ void MainController::searchCiudadano()
     cout << "Ingrese DNI: " << endl;
     getline(cin, dni);
 
-    if (dniTree.search(stoi(dni)))
-    {
-        cout << "Ciudadano registrado." << endl;
-        Ciudadano ciudadano;
-        ciudadano = binarySave.buscar(dni);
-        cout << ciudadano.getNombres();
-    }
-    else
+    if (!dniTree.search(stoi(dni)))
     {
         cout << "Ciudadano no encontrado." << endl;
+        return;
     }
 
+    Ciudadano ciudadano;
+    ciudadano = binarySave.buscar(dni);
+    cout << "=== DETALLES DEL CIUDADANO ===" << endl;
+    cout << "DNI: " << ciudadano.getDNI() << endl;
+    cout << "Nombres: " << ciudadano.getNombres() << endl;
+    cout << "Apellidos: " << ciudadano.getApellidos() << endl;
+    cout << "Nacionalidad: " << ciudadano.getNacionalidad() << endl;
+    cout << "Lugar de Nacimiento: " << ciudadano.getLugarNacimiento() << endl;
+    cout << "Dirección: " << ciudadano.getDireccion() << endl;
+    cout << "Teléfono: " << ciudadano.getTelefono() << endl;
+    cout << "Correo Electrónico: " << ciudadano.getCorreoElectronico() << endl;
+    cout << "Estado Civil: " << ciudadano.getEstadoCivil() << endl;
     system("pause");
 }
 
@@ -121,7 +128,8 @@ void MainController::generateRandom()
 
     if (file.is_open() & indexFile.is_open())
     {
-        while (i < 33)
+        streampos peso;
+        while (i < NUM_RANDOM)
         {
             Ciudadano ciudadano = genController.generarCiudadano('0');
 
@@ -129,7 +137,8 @@ void MainController::generateRandom()
             if (!dniTree.search(dni))
             {
                 dniTree.insert(dni);
-                binarySave.insert(ciudadano, file, indexFile);
+                peso = binarySave.insert(ciudadano, file, indexFile, 2);
+                binarySave.setUltimaPosicion(peso);
             }
             i++;
         }
@@ -138,7 +147,7 @@ void MainController::generateRandom()
     }
     else
     {
-        cerr << "Failed to open file: " << RUTA_DATA<< "\n";
+        cerr << "Failed to open file: " << RUTA_DATA << "\n";
     }
 
     binarySave.sobreEscribirUltimaPosicion();
@@ -146,5 +155,20 @@ void MainController::generateRandom()
 
 void MainController::loadBTree()
 {
+    fstream indexFile("../Data/index.csv", ios::in);
+    if (!indexFile.is_open())
+    {
+        cerr << "No se pudo abrir el archivo indices.csv" << endl;
+    }
 
+    string linea;
+
+    while (getline(indexFile, linea))
+    {
+        stringstream ss(linea);
+        string dniStr;
+        getline(ss, dniStr, ',');
+        dniTree.insert(stoi(dniStr));
+    }
+    indexFile.close();
 }

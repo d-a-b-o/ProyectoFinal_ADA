@@ -1,7 +1,7 @@
 #pragma once
 #include "Ciudadano.h"
 
-Ciudadano::Ciudadano(string _dni = 0, string _nombres = "", string _apellidos = "", string _nacionalidad = "", string _lugarNacimiento = "", string _direccion = "", string _telefono = "", string _correoElectronico = "", string _estadoCivil = "")
+Ciudadano::Ciudadano(string _dni = "", string _nombres = "", string _apellidos = "", string _nacionalidad = "", string _lugarNacimiento = "", string _direccion = "", string _telefono = "", string _correoElectronico = "", string _estadoCivil = "")
 {
     DNI                 = _dni;
     nombres             = _nombres;
