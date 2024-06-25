@@ -1,6 +1,6 @@
 #include <iostream>
 #include "../Model/BTree.cpp"
-#include "../Tools/GeneradorRegistros.cpp"
+#include "../Controller/GeneradorController.h"
 #include <chrono>
 
 using namespace std;
@@ -42,8 +42,9 @@ void test(BTree t, int num)
 int main()
 {
     int objetivoRand1;
+    GeneradorController genController;
     int objetivoRand2;
-    int dni;
+    string dni;
     int count = 0;
     int i = 0;
     BTree t(25);
@@ -52,30 +53,30 @@ int main()
 
     while (i < 3300000)
     {
-        dni = GeneradorRegistros::generarDNIAleatorio();
+        dni = genController.generarDni('1');
 
-        if (!t.search(dni) && dni > 9999999)
+        if (!t.search(stoi(dni)) && stoi(dni) > 9999999)
         {
-            t.insert(dni);
+            t.insert(stoi(dni));
             i++;
             if (i == 2371993)
-                objetivoRand1 = dni;
+                objetivoRand1 = stoi(dni);
             if (i == 2692013)
-                objetivoRand2 = dni;
+                objetivoRand2 = stoi(dni);
         }
         else
             count++;
     }
-    
+
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<seconds>(stop - start);
-    
+
     cout << "El tiempo de ejecucion es de " << duration.count() << " segundos.\n";
     cout << "Repetidos: " << count << "\n";
 
     if (!t.search(72804236))
         t.insert(72804236);
-    
+
     test(t, 72804236);
 
     test(t, objetivoRand1);

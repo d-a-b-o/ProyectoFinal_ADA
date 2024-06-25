@@ -1,7 +1,9 @@
 #include <iostream>
-#include "Controller/MainController.cpp"
+#include "../Controller/MainController.cpp"
+#include "../Model/BinarySave.cpp"
 
 using namespace std;
+BinarySave bin;
 
 int main()
 {

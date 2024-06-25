@@ -1,7 +1,7 @@
 #pragma once
 #include "Ciudadano.h"
 
-Ciudadano::Ciudadano(int _dni = -1, string _nombres = "", string _apellidos = "", string _nacionalidad = "", string _lugarNacimiento = "", string _direccion = "", string _telefono = "", string _correoElectronico = "", string _estadoCivil = "")
+Ciudadano::Ciudadano(string _dni = 0, string _nombres = "", string _apellidos = "", string _nacionalidad = "", string _lugarNacimiento = "", string _direccion = "", string _telefono = "", string _correoElectronico = "", string _estadoCivil = "")
 {
     DNI                 = _dni;
     nombres             = _nombres;
@@ -14,7 +14,7 @@ Ciudadano::Ciudadano(int _dni = -1, string _nombres = "", string _apellidos = ""
     estadoCivil         = _estadoCivil;
 }
 
-void Ciudadano::setDNI(int _dni)
+void Ciudadano::setDNI(string _dni)
 {
     DNI = _dni;
 }
@@ -51,7 +51,7 @@ void Ciudadano::setEstadoCivil(string _estadoCivil)
     estadoCivil = _estadoCivil;
 }
 
-int Ciudadano::getDNI()
+string Ciudadano::getDNI()
 {
     return DNI;
 }

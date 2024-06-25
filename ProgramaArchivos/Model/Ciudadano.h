@@ -6,7 +6,7 @@ using namespace std;
 class Ciudadano
 {
 private:
-    int DNI;
+    string DNI;
     string nombres;
     string apellidos;
     string nacionalidad;
@@ -17,9 +17,9 @@ private:
     string estadoCivil;
 
 public:
-    Ciudadano(int _dni, string _nombres, string _apellidos, string _nacionalidad, string _lugarNacimiento, string _direccion, string _telefono, string _correoElectronico, string _estadoCivil);
+    Ciudadano(string _dni, string _nombres, string _apellidos, string _nacionalidad, string _lugarNacimiento, string _direccion, string _telefono, string _correoElectronico, string _estadoCivil);
 
-    void setDNI(int _dni);
+    void setDNI(string _dni);
     void setNombres(string _nombres);
     void setApellidos(string _apellidos);
     void setNacionalidad(string _nacionalidad);
@@ -29,7 +29,7 @@ public:
     void setCorreoElectronico(string _correoElectronico);
     void setEstadoCivil(string _estadoCivil);
 
-    int getDNI();
+    string getDNI();
     string getNombres();
     string getApellidos();
     string getNacionalidad();
