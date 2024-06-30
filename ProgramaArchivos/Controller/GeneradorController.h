@@ -22,7 +22,7 @@ public:
     void loadMapNombres();
     void loadLstApellidos();
     void loadMapDepartamentos();
-    string generarDni(char inicial);
+    string generarDni();
     string generarNombres();
     string generarApellidos();
     string generarNacionalidad();
@@ -31,5 +31,5 @@ public:
     string generarTelefono();
     string generarCorreo(string &nombres, string &apellidos);
     string generarEstadoCivil();
-    Ciudadano generarCiudadano(char inicial);
+    Ciudadano generarCiudadano();
 };

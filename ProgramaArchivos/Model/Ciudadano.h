@@ -17,6 +17,7 @@ private:
     string estadoCivil;
 
 public:
+    Ciudadano();
     Ciudadano(string _dni, string _nombres, string _apellidos,
               string _nacionalidad, string _lugarNacimiento,
               string _direccion, string _telefono, string _correoElectronico,

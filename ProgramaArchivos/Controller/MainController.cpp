@@ -3,12 +3,14 @@
 #include <fstream>
 #include "MainController.h"
 #include "../Tools/Tools.cpp"
+#include <chrono>
 
-const int NUM_RANDOM = 33000000;
+const int NUM_RANDOM = 1000;
 const string RUTA_DATA = "../Data/data.bin";
 const string RUTA_INDEX = "../Data/index.csv";
 
 using namespace std;
+using namespace std::chrono;
 
 MainController::MainController() : dniTree(25)
 {
@@ -22,14 +24,15 @@ void MainController::run()
     int opt;
     do
     {
-        system("cls");
+        system("clear");
         cout << "=== MENU PRINCIPAL ===" << endl;
         cout << "[1] Ingresar ciudadano" << endl;
         cout << "[2] Buscar ciudadano" << endl;
-        cout << "[3] Generar 33 millones" << endl;
+        cout << "[3] Eliminar ciudadano" << endl;
+        cout << "[4] Generar 33 millones" << endl;
         cout << "[0] Cerrar" << endl;
         cin >> opt;
-        system("cls");
+        system("clear");
         switch (opt)
         {
         case 1:
@@ -39,6 +42,9 @@ void MainController::run()
             searchCiudadano();
             break;
         case 3:
+            deleteCiudadano();
+            break;
+        case 4:
             generateRandom();
             break;
 
@@ -74,6 +80,8 @@ void MainController::addCiudadano()
     cout << "Ingrese estado civil: " << endl;
     getline(cin, estadoCivil);
 
+    auto start = high_resolution_clock::now();
+
     if (!dniTree.search(stoi(dni)))
     {
         Ciudadano nuevoCiudadano(dni, nombres, apellidos, nacionalidad, lugarNacimiento, direccion, telefono, correoElectronico, estadoCivil);
@@ -82,8 +90,14 @@ void MainController::addCiudadano()
     }
     else
     {
-        cout << "Ciudadano ya existente." << endl;
+        cout << "Ciudadano ya registrado." << endl;
     }
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+
+    cout << "El tiempo de insercion es de " << duration.count() << " microsegundos.\n";
+    cin.get();
 }
 
 void MainController::searchCiudadano()
@@ -94,9 +108,12 @@ void MainController::searchCiudadano()
     cout << "Ingrese DNI: " << endl;
     getline(cin, dni);
 
+    auto start = high_resolution_clock::now();
+
     if (!dniTree.search(stoi(dni)))
     {
         cout << "Ciudadano no encontrado." << endl;
+        cin.get();
         return;
     }
 
@@ -108,19 +125,49 @@ void MainController::searchCiudadano()
     cout << "Apellidos: " << ciudadano.getApellidos() << endl;
     cout << "Nacionalidad: " << ciudadano.getNacionalidad() << endl;
     cout << "Lugar de Nacimiento: " << ciudadano.getLugarNacimiento() << endl;
-    cout << "Dirección: " << ciudadano.getDireccion() << endl;
-    cout << "Teléfono: " << ciudadano.getTelefono() << endl;
-    cout << "Correo Electrónico: " << ciudadano.getCorreoElectronico() << endl;
+    cout << "Direccion: " << ciudadano.getDireccion() << endl;
+    cout << "Telefono: " << ciudadano.getTelefono() << endl;
+    cout << "Correo Electronico: " << ciudadano.getCorreoElectronico() << endl;
     cout << "Estado Civil: " << ciudadano.getEstadoCivil() << endl;
-    system("pause");
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+
+    cout << "El tiempo de busqueda es de " << duration.count() << " microsegundos.\n";
+    cin.get();
 }
 
 void MainController::deleteCiudadano()
 {
+    string dni;
+    cin.ignore();
+    cout << "=== ELIMINAR CIUDADANO ===" << endl;
+    cout << "Ingrese DNI: " << endl;
+    getline(cin, dni);
+
+    auto start = high_resolution_clock::now();
+
+    if (!dniTree.search(stoi(dni)))
+    {
+        cout << "Ciudadano no encontrado." << endl;
+        cin.get();
+        return;
+    }
+
+    dniTree.remove(stoi(dni));
+    binarySave.erase(dni);
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+
+    cout << "El tiempo de eliminacion es de " << duration.count() << " microsegundos.\n";
+    cin.get();
 }
 
 void MainController::generateRandom()
 {
+    auto start = high_resolution_clock::now();
+
     int i = 0;
 
     fstream file(RUTA_DATA, ios::out | ios::app | ios::binary);
@@ -131,7 +178,7 @@ void MainController::generateRandom()
         streampos peso;
         while (i < NUM_RANDOM)
         {
-            Ciudadano ciudadano = genController.generarCiudadano('0');
+            Ciudadano ciudadano = genController.generarCiudadano();
 
             int dni = stoi(ciudadano.getDNI());
             if (!dniTree.search(dni))
@@ -151,10 +198,18 @@ void MainController::generateRandom()
     }
 
     binarySave.sobreEscribirUltimaPosicion();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<seconds>(stop - start);
+
+    cout << "El tiempo de generacion y carga es de " << duration.count() << " segundos.\n";
+
+    cin.get();
 }
 
 void MainController::loadBTree()
 {
+    auto start = high_resolution_clock::now();
+
     fstream indexFile("../Data/index.csv", ios::in);
     if (!indexFile.is_open())
     {
@@ -171,4 +226,10 @@ void MainController::loadBTree()
         dniTree.insert(stoi(dniStr));
     }
     indexFile.close();
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<seconds>(stop - start);
+
+    cout << "El tiempo de carga del arbol es de " << duration.count() << " segundos.\n";
+    cin.get();
 }

@@ -3,7 +3,6 @@
 #include "../Model/BinarySave.cpp"
 
 using namespace std;
-BinarySave bin;
 
 int main()
 {

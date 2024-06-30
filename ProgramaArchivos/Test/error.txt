@@ -78,13 +78,13 @@ string GeneradorController::generarDni()
 string GeneradorController::generarNombres()
 {
     string genero = (Tools::getRandomNumber(0, 1) == 0) ? "MASCULINO" : "FEMENINO";
-    int num = mapNombres.at(genero).size() - 1;
-    int posPrimerNombre = Tools::getRandomNumber(0, num);
-    int posSegundoNombre = Tools::getRandomNumber(0, num);
+    int posPrimerNombre = Tools::getRandomNumber(0, mapNombres.at(genero).size() - 1);
+    int posSegundoNombre = Tools::getRandomNumber(0, mapNombres.at(genero).size() - 1);
     string primerNombre = mapNombres.at(genero)[posPrimerNombre];
     string segundoNombre = mapNombres.at(genero)[posSegundoNombre];
     string nombres = primerNombre + " " + segundoNombre;
 
+    
     return nombres;
 }
 
@@ -159,14 +159,63 @@ string GeneradorController::generarEstadoCivil()
 Ciudadano GeneradorController::generarCiudadano()
 {
     string DNI = generarDni();
-    string nombres = "Francisco Arturo";
-    string apellidos = "Sanchez Astete";
+    string nombres = generarNombres();
+    string apellidos = generarApellidos();
     string nacionalidad = generarNacionalidad();
     string lugarNacimiento = generarLugarNacimiento();
-    string direccion = "Av. La Fontana 550, La Molina";
+    string direccion = generarDireccion();
     string telefono = generarTelefono();
     string correo = generarCorreo(nombres, apellidos);
     string estadoCivil = generarEstadoCivil();
 
     return Ciudadano(DNI, nombres, apellidos, nacionalidad, lugarNacimiento, direccion, telefono, correo, estadoCivil);
 }
+#include <iostream>
+#include "../Controller/GeneradorController.cpp"
+#include "../Model/Ciudadano.cpp"
+#include <chrono>
+
+using namespace std;
+using namespace std::chrono;
+
+int main()
+{
+    auto start = high_resolution_clock::now();
+
+    GeneradorController temp;
+    Ciudadano ciudadano = temp.generarCiudadano();
+
+    cout << "DNI: " << ciudadano.getDNI() << " | " << ciudadano.getDNI().length() << endl;
+    cout << "Nombres: " << ciudadano.getNombres() << " | " << ciudadano.getNombres().length() << endl;
+    cout << "Apellidos: " << ciudadano.getApellidos() << " | " << ciudadano.getApellidos().length() << endl;
+    cout << "Nacionalidad: " << ciudadano.getNacionalidad() << " | " << ciudadano.getNacionalidad().length() << endl;
+    cout << "Lugar de Nacimiento: " << ciudadano.getLugarNacimiento() << " | " << ciudadano.getLugarNacimiento().length() << endl;
+    cout << "Direccion: " << ciudadano.getDireccion() << " | " << ciudadano.getDireccion().length() << endl;
+    cout << "Telefono: " << ciudadano.getTelefono() << " | " << ciudadano.getTelefono().length() << endl;
+    cout << "Correo Electronico: " << ciudadano.getCorreoElectronico() << " | " << ciudadano.getCorreoElectronico().length() << endl;
+    cout << "Estado Civil: " << ciudadano.getEstadoCivil() << " | " << ciudadano.getEstadoCivil().length() << endl;
+
+    string linea = ciudadano.getDNI() + ";" +
+                   ciudadano.getNombres() + ";" +
+                   ciudadano.getApellidos() + ";" +
+                   ciudadano.getNacionalidad() + ";" +
+                   ciudadano.getLugarNacimiento() + ";" +
+                   ciudadano.getDireccion() + ";" +
+                   ciudadano.getTelefono() + ";" +
+                   ciudadano.getCorreoElectronico() + ";" +
+                   ciudadano.getEstadoCivil() + ";";
+
+    cout << "Tamano registro: " <<  linea.size() << endl;
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    
+    cout << "El tiempo de ejecucion es de " << duration.count() << " microsegundos.\n";
+    cin.get();
+
+    return 0;
+}
+
+terminate called after throwing an instance of 'std::out_of_range'
+  what():  map::at
+bash: line 1: 11486 Aborted                 (core dumped) ./"TestGeneradorRegistros"
