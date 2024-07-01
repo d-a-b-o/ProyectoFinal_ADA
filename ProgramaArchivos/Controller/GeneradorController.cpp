@@ -1,10 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include "GeneradorController.h"
-#include "../Tools/Tools.cpp"
 
 const string RUTA_NOMBRES = "../Data/nombres.csv";
 const string RUTA_APELLIDOS = "../Data/apellidos.csv";
@@ -30,10 +26,9 @@ void GeneradorController::loadMapNombres()
 
     while (getline(file, linea))
     {
-        stringstream ss(linea);
-        string nombre, genero;
-        getline(ss, nombre, ',');
-        getline(ss, genero, ',');
+        vector<string> cut = Tools::splitString(linea, ',');
+        string nombre = cut[0];
+        string genero = cut[1];
         mapNombres[genero].push_back(nombre);
     }
 }
@@ -54,14 +49,12 @@ void GeneradorController::loadMapDepartamentos()
 
     while (getline(file, linea))
     {
-        stringstream ss(linea);
-        string departamento, provincias;
+        vector<string> cut = Tools::splitString(linea, ',');
+        string departamento = cut[0];
+        string provincias = cut[1];
 
-        if (getline(ss, departamento, ',') && getline(ss, provincias))
-        {
-            lstDepartamentos.push_back(departamento);
-            mapDepartamentos[departamento] = Tools::splitString(provincias, ';');
-        }
+        lstDepartamentos.push_back(departamento);
+        mapDepartamentos[departamento] = Tools::splitString(provincias, ';');
     }
 }
 
@@ -95,7 +88,6 @@ string GeneradorController::generarApellidos()
     string primerApellido = lstApellidos[posPrimerApellido];
     string segundoApellido = lstApellidos[posSegundoApellido];
     string apellidos = primerApellido + " " + segundoApellido;
-
 
     return apellidos;
 }
@@ -159,11 +151,11 @@ string GeneradorController::generarEstadoCivil()
 Ciudadano GeneradorController::generarCiudadano()
 {
     string DNI = generarDni();
-    string nombres = "Francisco Arturo";
-    string apellidos = "Sanchez Astete";
+    string nombres = generarNombres();
+    string apellidos = generarApellidos();
     string nacionalidad = generarNacionalidad();
     string lugarNacimiento = generarLugarNacimiento();
-    string direccion = "Av. La Fontana 550, La Molina";
+    string direccion = generarDireccion();
     string telefono = generarTelefono();
     string correo = generarCorreo(nombres, apellidos);
     string estadoCivil = generarEstadoCivil();

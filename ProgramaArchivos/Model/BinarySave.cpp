@@ -1,52 +1,24 @@
 #pragma once
-#include <iostream>
-#include <unistd.h>
-#include <sstream>
-#include <string>
 #include "BinarySave.h"
-#include "../Controller/GeneradorController.cpp"
 
-const string RUTA_ULTIMA_POSICION = "../Data/final.txt";
+const string RUTA_DATA = "../Data/data.bin";
+const string RUTA_INDEX = "../Data/index.csv";
 
 using namespace std;
 
-void BinarySave::leerUltimaPosicion()
+int BinarySave::getNumRegistros()
 {
-    ifstream archivo(RUTA_ULTIMA_POSICION);
-    int numero;
-
-    if (archivo.is_open())
-    {
-        archivo >> numero;
-        archivo.close();
-        ultimaPosicion = numero;
-    }
+    return numRegistros;
 }
 
-void BinarySave::sobreEscribirUltimaPosicion()
+void BinarySave::addNumRegistros()
 {
-    ofstream archivo(RUTA_ULTIMA_POSICION);
-
-    if (archivo.is_open())
-    {
-        archivo << ultimaPosicion;
-        archivo.close();
-    }
+    numRegistros++;
 }
 
-streampos BinarySave::getUltimaPosicion()
+void BinarySave::setNumRegistros(streampos pos)
 {
-    return ultimaPosicion;
-}
-
-void BinarySave::addUltimaPosicion(streampos pos)
-{
-    ultimaPosicion += pos;
-}
-
-void BinarySave::setUltimaPosicion(streampos pos)
-{
-    ultimaPosicion = pos;
+    numRegistros = pos / 200;
 }
 
 streampos BinarySave::buscarPos(string dni)
@@ -63,10 +35,9 @@ streampos BinarySave::buscarPos(string dni)
 
     while (getline(indexFile, linea))
     {
-        stringstream ss(linea);
-        string dniStr, posicionStr;
-        getline(ss, dniStr, ',');
-        getline(ss, posicionStr, ',');
+        vector<string> cut = Tools::splitString(linea, ',');
+        string dniStr = cut[0];
+        string posicionStr = cut[1];
 
         if (dniStr == dni)
         {
@@ -101,38 +72,23 @@ Ciudadano BinarySave::buscar(string dni)
     file.close();
 
     string registro(buffer.begin(), buffer.end());
-    stringstream ss(registro);
-    string token;
 
-    vector<string> lst;
+    vector<string> cut = Tools::splitString(registro, ';');
 
-    for(string i:lst)
-    {
-
-    }
-    getline(ss, token, ';');
-    ciudadano.setDNI(token);
-    getline(ss, token, ';');
-    ciudadano.setNombres(token);
-    getline(ss, token, ';');
-    ciudadano.setApellidos(token);
-    getline(ss, token, ';');
-    ciudadano.setNacionalidad(token);
-    getline(ss, token, ';');
-    ciudadano.setLugarNacimiento(token);
-    getline(ss, token, ';');
-    ciudadano.setDireccion(token);
-    getline(ss, token, ';');
-    ciudadano.setTelefono(token);
-    getline(ss, token, ';');
-    ciudadano.setCorreoElectronico(token);
-    getline(ss, token, ';');
-    ciudadano.setEstadoCivil(token);
+    ciudadano.setDNI(cut[0]);
+    ciudadano.setNombres(cut[1]);
+    ciudadano.setApellidos(cut[2]);
+    ciudadano.setNacionalidad(cut[3]);
+    ciudadano.setLugarNacimiento(cut[4]);
+    ciudadano.setDireccion(cut[5]);
+    ciudadano.setTelefono(cut[6]);
+    ciudadano.setCorreoElectronico(cut[7]);
+    ciudadano.setEstadoCivil(cut[8]);
 
     return ciudadano;
 }
 
-streampos BinarySave::insert(Ciudadano &ciudadano, fstream &fileData, fstream &fileIndex, int opt)
+void BinarySave::insert(Ciudadano &ciudadano, fstream &fileData, fstream &fileIndex)
 {
     string linea = ciudadano.getDNI() + ";" +
                    ciudadano.getNombres() + ";" +
@@ -151,36 +107,37 @@ streampos BinarySave::insert(Ciudadano &ciudadano, fstream &fileData, fstream &f
     fileData.write(reinterpret_cast<const char *>(&tamanoStr), sizeof(tamanoStr));
     fileData.write(linea.c_str(), tamanoStr);
 
-    streampos posicion = fileData.tellp();
-
-    fileIndex << ciudadano.getDNI() << "," << getUltimaPosicion() << "\n";
-
-    return posicion;
+    fileIndex << ciudadano.getDNI() << "," << getNumRegistros() * 200 << "\n";
 }
 
 void BinarySave::save(Ciudadano &ciudadano)
 {
     fstream file("../Data/data.bin", ios::out | ios::app | ios::binary);
+    if (!file.is_open())
+    {
+        cerr << "Fallo al abrir ../Data/data.bin \n";
+        cin.get();
+    }
+    
     fstream indexFile("../Data/index.csv", ios::in | ios::out | ios::app);
-
-    if (file.is_open())
+    if (!indexFile.is_open())
     {
-        insert(ciudadano, file, indexFile, 1);
-        addUltimaPosicion(200);
-        file.close();
-    }
-    else
-    {
-        cerr << "No se pudo abrir el archivo data.bin" << endl;
+        cerr << "Fallo al abrir ../Data/index.csv \n";
+        cin.get();
     }
 
-    sobreEscribirUltimaPosicion();
+    insert(ciudadano, file, indexFile);
+
+    file.close();
+    indexFile.close();
+
+    addNumRegistros();
 }
 
 void BinarySave::erase(string dni)
 {
     streampos posicionEliminar = buscarPos(dni);
-    streampos posicionUltimo = ultimaPosicion.operator-(200);
+    streampos posicionUltimo = (numRegistros - 1) * 200;
 
     fstream file("../Data/data.bin", ios::in | ios::out | ios::binary);
     if (!file.is_open())
@@ -223,10 +180,9 @@ void BinarySave::erase(string dni)
     vector<string> indexLines;
     while (getline(indexFile, linea))
     {
-        stringstream ss(linea);
-        string dniStr, posicionStr;
-        getline(ss, dniStr, ',');
-        getline(ss, posicionStr, ',');
+        vector<string> cut = Tools::splitString(linea, ',');
+        string dniStr = cut[0];
+        string posicionStr = cut[1];
 
         if (static_cast<streampos>(stoll(posicionStr)) == posicionUltimo)
         {
@@ -247,6 +203,5 @@ void BinarySave::erase(string dni)
     }
     indexFileTruncate.close();
 
-    setUltimaPosicion(posicionUltimo);
-    sobreEscribirUltimaPosicion();
+    setNumRegistros(posicionUltimo);
 }

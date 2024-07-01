@@ -2,6 +2,10 @@
 
 #include <string>
 #include <vector>
+#include <random>
+#include <sstream>
+
+using namespace std;
 
 // Herramientas de uso general
 class Tools

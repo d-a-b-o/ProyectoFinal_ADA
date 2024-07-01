@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Tools.h"
-#include <random>
+
+using namespace std;
 
 int Tools::getRandomNumber(int desde, int hasta)
 {

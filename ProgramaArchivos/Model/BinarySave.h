@@ -1,24 +1,25 @@
 #pragma once
+#include <iostream>
 #include <fstream>
-#include <string>
+#include <unistd.h>
 #include <vector>
+#include <string>
 #include "../Model/Ciudadano.cpp"
+#include "../Tools/Tools.cpp"
 
 using namespace std;
 
 class BinarySave
 {
 private:
-    streampos ultimaPosicion = 0;
+    int numRegistros = 0;
 public:
-    streampos insert(Ciudadano &ciudadano, fstream &file, fstream &fileIndex, int opt);
     streampos buscarPos(string dni);
     Ciudadano buscar(string dni);
-    void leerUltimaPosicion();
-    void sobreEscribirUltimaPosicion();
-    streampos getUltimaPosicion();
-    void addUltimaPosicion(streampos pos);
-    void setUltimaPosicion(streampos pos);
+    void insert(Ciudadano &ciudadano, fstream &file, fstream &fileIndex);
     void save(Ciudadano &ciudadano);
     void erase(string dni);
+    void addNumRegistros();
+    void setNumRegistros(streampos pos);
+    int getNumRegistros();
 };

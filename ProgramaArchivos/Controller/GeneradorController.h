@@ -1,7 +1,10 @@
 #pragma once
+#include <iostream>
+#include <fstream>
+#include <vector>
 #include <string>
 #include <map>
-#include <vector>
+#include "../Tools/Tools.cpp"
 #include "../Model/Ciudadano.h"
 
 using namespace std;
