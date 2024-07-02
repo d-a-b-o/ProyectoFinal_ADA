@@ -1,79 +1,110 @@
 #include <iostream>
 #include "../Controller/GeneradorController.cpp"
+#include "../Model/CuckooHashTable.cpp"
 #include "../Model/BinarySave.cpp"
-#include "../Model/BTree.cpp"
 
 using namespace std;
 
 GeneradorController genController;
 BinarySave binarySave;
-BTree dniTree(25);
+CuckooHashTable indexTable;
 
-void loadBTree()
+void loadIndexTable()
 {
-    fstream indexFile("../Data/index.csv", ios::in);
-    if (!indexFile.is_open())
+    fstream file(RUTA_DATA, ios::in | ios::binary);
+    if (!file.is_open())
     {
-        cerr << "Fallo al abrir ../Data/index.csv \n";
-        cin.get();
+        cerr << "No se pudo abrir el archivo data.bin" << endl;
+        return;
+    }
+    file.seekg(0, ios::end);
+    streampos fileSize = file.tellg();
+    cout << fileSize << endl;
+    int numRegistros = fileSize / SIZE_REGISTRO;
+    file.seekg(0, ios::beg);
+
+    for (int i = 0; i < numRegistros; ++i)
+    {
+        file.seekg(i * SIZE_REGISTRO);
+        int tamanoStr;
+        file.read(reinterpret_cast<char *>(&tamanoStr), sizeof(tamanoStr));
+
+        tamanoStr = 196;
+
+        if (file.gcount() != sizeof(tamanoStr))
+        {
+            cerr << "Error reading tamanoStr at index " << i << " " << file.gcount() << endl;
+            cin.get();
+            continue;
+        }
+
+        vector<char> buffer(tamanoStr);
+        file.read(buffer.data(), tamanoStr);
+
+        if (file.gcount() != tamanoStr)
+        {
+            cerr << "Error reading registro at index " << i << " with expected size " << tamanoStr << endl;
+            cin.get();
+            continue;
+        }
+
+        string registro(buffer.begin(), buffer.end());
+        vector<string> cut = Tools::splitString(registro, ';');
+        int key = stoi(cut[0]);
+        indexTable.insert(key, i);
     }
 
-    string linea;
-
-    while (getline(indexFile, linea))
-    {
-        stringstream ss(linea);
-        string dniStr;
-        getline(ss, dniStr, ',');
-        dniTree.insert(stoi(dniStr));
-        binarySave.addNumRegistros();
-    }
-    indexFile.close();
+    file.close();
 }
 
 void generar(int numGenerar)
 {
-    fstream file("../Data/data.bin", ios::out | ios::app | ios::binary);
+    fstream file(RUTA_DATA, ios::out | ios::app | ios::binary);
     if (!file.is_open())
     {
         cerr << "Fallo al abrir ../Data/data.bin \n";
         cin.get();
     }
     
-    fstream indexFile("../Data/index.csv", ios::in | ios::out | ios::app);
-    if (!indexFile.is_open())
-    {
-        cerr << "Fallo al abrir ../Data/index.csv \n";
-        cin.get();
-    }
-    
     for (int i = 0; i < numGenerar; i++)
     {
         Ciudadano ciudadano = genController.generarCiudadano();
-        int dni = stoi(ciudadano.getDNI());
+        try {
+            int dni = stoi(ciudadano.getDNI());
 
-        if (!dniTree.search(dni))
-        {
-            dniTree.insert(dni);
-            binarySave.insert(ciudadano, file, indexFile);
-            binarySave.addNumRegistros();
+            if (indexTable.search(dni).num != dni)
+            {
+                cout << i << "-" << dni << ": " << ciudadano.getNombres() << endl;
+                binarySave.insert(ciudadano, file);
+                indexTable.insert(dni, binarySave.getNumRegistros()-1);
+                binarySave.addNumRegistros();
+            }
+            else
+            {
+                i--;
+            }
+        }
+        catch (const invalid_argument &e) {
+            cerr << "Error: invalid argument for stoi with value " << ciudadano.getDNI() << endl;
+        }
+        catch (const out_of_range &e) {
+            cerr << "Error: out of range for stoi with value " << ciudadano.getDNI() << endl;
         }
     }
     
     file.close();
-    indexFile.close();
     cin.get();
 }
 
+
 int main()
 {
-    loadBTree();
+    loadIndexTable();
 
     int opt;
 
     do
     {
-        system("clear");
         cout << "======= MENU GENERADOR =======" << endl;
         cout << " [1] Generar 1000" << endl;
         cout << " [2] Generar 10000" << endl;

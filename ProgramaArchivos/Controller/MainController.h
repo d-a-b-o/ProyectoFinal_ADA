@@ -4,8 +4,9 @@
 #include <fstream>
 #include <string>
 #include <chrono>
+#include <sys/resource.h>
 #include "../Model/Ciudadano.cpp"
-#include "../Model/BTree.cpp"
+#include "../Model/CuckooHashTable.cpp"
 #include "../Model/BinarySave.cpp"
 #include "../Tools/Tools.cpp"
 
@@ -14,7 +15,7 @@ using namespace std;
 class MainController
 {
 private:
-    BTree dniTree;
+    CuckooHashTable indexTable;
     BinarySave binarySave;
 public:
     MainController();
@@ -22,5 +23,6 @@ public:
     void addCiudadano();
     void searchCiudadano();
     void deleteCiudadano();
-    void loadBTree();
+    void loadIndexTable();
+    void viewMemoryUsage();
 };

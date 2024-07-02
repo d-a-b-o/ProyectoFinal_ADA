@@ -60,10 +60,7 @@ void GeneradorController::loadMapDepartamentos()
 
 string GeneradorController::generarDni()
 {
-    string dni = "";
-
-    for (int i = 0; i < 8; i++)
-        dni += to_string(Tools::getRandomNumber(0, 9));
+    string dni = to_string(Tools::getRandomNumber(10000000, 99999999));
 
     return dni;
 }
@@ -155,7 +152,7 @@ Ciudadano GeneradorController::generarCiudadano()
     string apellidos = generarApellidos();
     string nacionalidad = generarNacionalidad();
     string lugarNacimiento = generarLugarNacimiento();
-    string direccion = generarDireccion();
+    string direccion = "Holis";
     string telefono = generarTelefono();
     string correo = generarCorreo(nombres, apellidos);
     string estadoCivil = generarEstadoCivil();

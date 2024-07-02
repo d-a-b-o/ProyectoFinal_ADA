@@ -14,12 +14,10 @@ class BinarySave
 private:
     int numRegistros = 0;
 public:
-    streampos buscarPos(string dni);
-    Ciudadano buscar(string dni);
-    void insert(Ciudadano &ciudadano, fstream &file, fstream &fileIndex);
+    Ciudadano buscar(streampos posicion);
+    void insert(Ciudadano &ciudadano, fstream &file);
     void save(Ciudadano &ciudadano);
-    void erase(string dni);
+    void erase(streampos posicion);
     void addNumRegistros();
-    void setNumRegistros(streampos pos);
     int getNumRegistros();
 };

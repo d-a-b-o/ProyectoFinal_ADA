@@ -4,9 +4,9 @@
 using namespace std;
 using namespace std::chrono;
 
-MainController::MainController() : dniTree(25)
+MainController::MainController()
 {
-    loadBTree();
+    loadIndexTable();
 }
 
 void MainController::run()
@@ -32,7 +32,9 @@ void MainController::run()
         case 3:
             deleteCiudadano();
             break;
-
+        case 4:
+            viewMemoryUsage();
+            break;
         default:
             break;
         }
@@ -50,7 +52,7 @@ void MainController::addCiudadano()
     cout << "Ingrese DNI: " << endl;
     getline(cin, dni);
 
-    if (dniTree.search(stoi(dni)))
+    if (indexTable.search(stoi(dni)).num == stoi(dni))
     {
         cout << "Ciudadano ya registrado." << endl;
         cin.get();
@@ -77,7 +79,7 @@ void MainController::addCiudadano()
     auto start = high_resolution_clock::now();
 
     Ciudadano nuevoCiudadano(dni, nombres, apellidos, nacionalidad, lugarNacimiento, direccion, telefono, correoElectronico, estadoCivil);
-    dniTree.insert(stoi(dni));
+    indexTable.insert(stoi(dni), indexTable.getCurrentSize());
     binarySave.save(nuevoCiudadano);
 
     auto stop = high_resolution_clock::now();
@@ -99,7 +101,9 @@ void MainController::searchCiudadano()
 
     auto start = high_resolution_clock::now();
 
-    if (!dniTree.search(stoi(dni)))
+    Node busqueda = indexTable.search(stoi(dni));
+
+    if (busqueda.num != stoi(dni))
     {
         cout << "Ciudadano no encontrado." << endl;
         cin.get();
@@ -107,7 +111,7 @@ void MainController::searchCiudadano()
     }
 
     Ciudadano ciudadano;
-    ciudadano = binarySave.buscar(dni);
+    ciudadano = binarySave.buscar(busqueda.pos);
     cout << "=== DETALLES DEL CIUDADANO ===" << endl;
     cout << "DNI: " << ciudadano.getDNI() << endl;
     cout << "Nombres: " << ciudadano.getNombres() << endl;
@@ -138,15 +142,17 @@ void MainController::deleteCiudadano()
 
     auto start = high_resolution_clock::now();
 
-    if (!dniTree.search(stoi(dni)))
+    Node busqueda = indexTable.search(stoi(dni));
+
+    if (busqueda.num != stoi(dni))
     {
         cout << "Ciudadano no encontrado." << endl;
         cin.get();
         return;
     }
 
-    dniTree.remove(stoi(dni));
-    binarySave.erase(dni);
+    binarySave.erase(busqueda.pos);
+    indexTable.remove(busqueda.num);
 
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
@@ -155,31 +161,47 @@ void MainController::deleteCiudadano()
     cin.get();
 }
 
-void MainController::loadBTree()
+void MainController::loadIndexTable()
 {
-    auto start = high_resolution_clock::now();
-
-    fstream indexFile("../Data/index.csv", ios::in);
-    if (!indexFile.is_open())
+    fstream file(RUTA_DATA, ios::in | ios::binary);
+    if (!file.is_open())
     {
-        cerr << "Fallo al abrir ../Data/index.csv \n";
-        cin.get();
+        cerr << "No se pudo abrir el archivo data.bin" << endl;
+        return;
+    }
+    file.seekg(0, ios::end);
+    streampos fileSize = file.tellg();
+    int numRegistros = fileSize / SIZE_REGISTRO;
+    file.seekg(0, ios::beg);
+
+    for (int i = 0; i < numRegistros; ++i)
+    {
+        file.seekg(i * SIZE_REGISTRO);
+        int tamanoStr;
+        file.read(reinterpret_cast<char *>(&tamanoStr), sizeof(tamanoStr));
+
+        vector<char> buffer(tamanoStr);
+        file.read(buffer.data(), tamanoStr);
+
+        string registro(buffer.begin(), buffer.end());
+        vector<string> cut = Tools::splitString(registro, ';');
+        try
+        {
+            if (!cut.empty())
+            {
+                indexTable.insert(stoi(cut[0]), i);
+            }
+        }
+        catch(const std::exception& e){}
     }
 
-    string linea;
+    file.close();
+}
 
-    while (getline(indexFile, linea))
-    {
-        vector<string> cut = Tools::splitString(linea, ',');
-        string dniStr = cut[0];
-        dniTree.insert(stoi(dniStr));
-        binarySave.addNumRegistros();
-    }
-    indexFile.close();
-
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<seconds>(stop - start);
-
-    cout << "El tiempo de carga del arbol es de " << duration.count() << " segundos.\n";
+void MainController::viewMemoryUsage()
+{
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    cout << "Memory usage: " << usage.ru_maxrss << " kilobytes" << endl;
     cin.get();
 }
