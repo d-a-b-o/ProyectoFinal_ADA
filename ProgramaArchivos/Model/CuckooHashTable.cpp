@@ -74,7 +74,7 @@ void CuckooHashTable::insert(u_int32_t key, u_int32_t _pos)
             return;
         }
 
-        if (nodo.numHash == 4)
+        if (nodo.numHash == 9)
             nodo.numHash = 0;
         else
             nodo.numHash++;
@@ -87,7 +87,7 @@ void CuckooHashTable::insert(u_int32_t key, u_int32_t _pos)
 
 Node CuckooHashTable::search(const u_int32_t &key) const
 {
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 10; ++i)
     {
         size_t pos = calculateHash(key, i);
         if (tables[i][pos].num == key)
@@ -100,7 +100,7 @@ Node CuckooHashTable::search(const u_int32_t &key) const
 
 void CuckooHashTable::remove(const u_int32_t &key)
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
     {
         size_t pos = calculateHash(key, i);
         if (tables[i][pos].num == key)
