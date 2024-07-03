@@ -16,6 +16,7 @@ void MainController::run()
     {
         system("clear");
         cout << "=== MENU PRINCIPAL ===" << endl;
+        cout << "[-] Numero de registros: " <<binarySave.getNumRegistros() << endl;
         cout << "[1] Ingresar ciudadano" << endl;
         cout << "[2] Buscar ciudadano" << endl;
         cout << "[3] Eliminar ciudadano" << endl;
@@ -144,7 +145,7 @@ void MainController::deleteCiudadano()
 
     Node busqueda = indexTable.search(stoi(dni));
 
-    if (busqueda.num != stoi(dni))
+    if (busqueda.num == 0)
     {
         cout << "Ciudadano no encontrado." << endl;
         cin.get();
@@ -153,6 +154,8 @@ void MainController::deleteCiudadano()
 
     binarySave.erase(busqueda.pos);
     indexTable.remove(busqueda.num);
+    Ciudadano temp = binarySave.buscar(busqueda.pos);
+    indexTable.replace(stoi(temp.getDNI()), busqueda.pos);
 
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
@@ -190,6 +193,7 @@ void MainController::loadIndexTable()
             if (!cut.empty())
             {
                 indexTable.insert(stoi(cut[0]), i);
+                binarySave.addNumRegistros();
             }
         }
         catch(const std::exception& e){}

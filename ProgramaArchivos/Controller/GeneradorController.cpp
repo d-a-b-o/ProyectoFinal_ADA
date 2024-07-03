@@ -152,7 +152,7 @@ Ciudadano GeneradorController::generarCiudadano()
     string apellidos = generarApellidos();
     string nacionalidad = generarNacionalidad();
     string lugarNacimiento = generarLugarNacimiento();
-    string direccion = "Holis";
+    string direccion = generarDireccion();
     string telefono = generarTelefono();
     string correo = generarCorreo(nombres, apellidos);
     string estadoCivil = generarEstadoCivil();

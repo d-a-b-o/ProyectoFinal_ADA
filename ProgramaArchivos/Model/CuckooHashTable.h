@@ -29,4 +29,5 @@ public:
     void insert(u_int32_t key, u_int32_t _pos);
     Node search(const u_int32_t &key)const;
     void remove(const u_int32_t &key);
+    void replace(const u_int32_t &key, u_int32_t _pos);
 };

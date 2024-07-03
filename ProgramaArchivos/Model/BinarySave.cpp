@@ -71,6 +71,7 @@ void BinarySave::insert(Ciudadano &ciudadano, fstream &fileData)
 
     fileData.write(reinterpret_cast<const char *>(&tamanoStr), sizeof(tamanoStr));
     fileData.write(linea.c_str(), tamanoStr);
+    addNumRegistros();
 }
 
 void BinarySave::save(Ciudadano &ciudadano)
@@ -85,8 +86,6 @@ void BinarySave::save(Ciudadano &ciudadano)
     insert(ciudadano, file);
 
     file.close();
-
-    addNumRegistros();
 }
 
 void BinarySave::erase(streampos posicion)

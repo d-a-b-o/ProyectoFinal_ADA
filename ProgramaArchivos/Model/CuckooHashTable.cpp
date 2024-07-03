@@ -114,3 +114,16 @@ void CuckooHashTable::remove(const u_int32_t &key)
     cout << "Dni no registrado." << endl;
     cin.get();
 }
+
+void CuckooHashTable::replace(const u_int32_t &key, u_int32_t _pos)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        size_t pos = calculateHash(key, i);
+        if (tables[i][pos].num == key)
+        {
+            tables[i][pos].pos = _pos;
+            return;
+        }
+    }
+}
